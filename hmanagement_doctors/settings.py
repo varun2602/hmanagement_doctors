@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'manage_doctors',
     'rest_framework'
 ]
+AUTH_USER_MODEL = "manage_doctors.Doctor"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

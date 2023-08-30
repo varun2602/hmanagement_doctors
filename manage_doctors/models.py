@@ -17,6 +17,7 @@ class Patients(models.Model):
 
 
 class Doctor(AbstractUser):
+    email = models.CharField(max_length = 50, blank = True, null = True, unique=True)
     DoctorID = models.CharField(max_length=10, primary_key=True, default=uuid.uuid4, editable=False)
     doc_name = models.CharField(max_length=100, null=True, blank=True)
     designation = models.CharField(max_length=100, blank=True, null=True)
@@ -30,6 +31,7 @@ class Doctor(AbstractUser):
         'auth.Permission', related_name='custom_user_permissions', blank=True
     )
     USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
 
     
 
