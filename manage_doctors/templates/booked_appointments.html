@@ -1,0 +1,136 @@
+{% extends 'layout1.html' %} 
+
+{% block title %}
+<style>
+    table td,
+    table th {
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .mask-custom {
+      background: rgba(24, 24, 16, .2);
+      border-radius: 2em;
+      backdrop-filter: blur(25px);
+      border: 2px solid rgba(255, 255, 255, 0.05);
+      background-clip: padding-box;
+      box-shadow: 10px 10px 10px rgba(46, 54, 68, 0.03);
+    }
+
+    body {
+      height: 100%;
+      margin: 0;
+      background-image: url(https://mdbootstrap.com/img/Photos/new-templates/glassmorphism-article/img7.jpg);
+      background-size: cover;
+    }
+    #message_res{
+        text-align: center;
+        color:red;
+    }
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function(){
+    // Sense confirm button 
+    confirm_buttons = document.querySelectorAll('.confirm')
+    
+    // Confirm appointment 
+    confirm_buttons.forEach(button => {
+        button.addEventListener('click', function(){
+            button_id = this.id 
+            parent_id = this.closest('tr').id
+            doctor_name = this.closest('tr').querySelector('.doctor').textContent
+            patient_name = this.closest('tr').querySelector('.patient').textContent
+            date_time = this.closest('tr').querySelector('.datetime').textContent
+            // alert(`${button_id} ${parent_id} ${doctor_name} ${patient_name}`)
+            let formdata = new FormData()
+            formdata.append('doctor', doctor_name)
+            formdata.append('patient', patient_name)
+            formdata.append('datetime', date_time)
+            fetch('confirm',{
+                body:formdata,
+                method:'POST'
+            }).then(response => response.json()).then(data => {
+                console.log(data)
+                location.reload()
+                message_res = document.querySelector('#message_res')
+                message_res.innerText = 'Confirmed successfully!'
+            }).catch(error => console.error(error))
+        })
+    })
+
+    // Decline appointment 
+    decline_buttons = document.querySelectorAll('.decline')
+    decline_buttons.forEach(button => {
+        button.addEventListener('click', function(){
+            button_id = this.id 
+            let doctor_name = this.closest('tr').querySelector('.doctor').textContent
+            let patient_name = this.closest('tr').querySelector('.patient').textContent
+            let date_time = this.closest('tr').querySelector('.datetime').textContent
+            let formdata = new FormData()
+            formdata.append('doctor', doctor_name)
+            formdata.append('patient', patient_name)
+            formdata.append('datetime', date_time)
+            fetch('decline_appointment', {
+                body:formdata,
+                method:'POST'
+            }).then(response => response.json()).then(data => {
+                console.log(data)
+                location.reload()
+            })
+        })
+    })
+});
+
+</script>
+{% endblock %} 
+
+{% block body %} 
+<h3 id="message_res"></h3>
+<section class="intro">
+    <div class="mask d-flex align-items-center h-100">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12">
+                    <div class="card mask-custom">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover text-white mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Sr</th>
+                                            <th scope="col">Doctor Name</th>
+                                            <th scope="col">Patient Name</th>
+                                            <th scope="col">Date of Appointment</th>
+                                            <th scope="col">Confirm</th>
+                                            <th scope="col">Decline</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+                                        {% for appointment in appointments %}
+                                        <tr id = "row_{{forloop.counter}}">
+                                            <td>{{forloop.counter}}</td>
+                                            <td class = "doctor">{{ appointment.DoctorName }}</td>
+                                            <td class = "patient">{{ appointment.PatientName }}</td>
+                                            <td class = "datetime">{{ appointment.DateOfAppointment }}</td>
+                                            <td style = "color:green"> <button type="button" id = "confirm_{{forloop.counter}}" class="btn b tn-default confirm">Confirm</button></td>
+                                            <td style = "color:red"><button type="button" class="btn btn-default decline">Decline</button></td>
+                                        </tr>
+                                        {% with counter = counter + 1}
+                                        {% endfor %}
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+
+

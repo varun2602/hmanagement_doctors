@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+<link href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+     background: url('https://static-communitytable.parade.com/wp-content/uploads/2014/03/rethink-target-heart-rate-number-ftr.jpg') fixed;
+    background-size: cover;
+}
+
+*[role="form"] {
+    max-width: 530px;
+    padding: 15px;
+    margin: 0 auto;
+    border-radius: 0.3em;
+    background-color: #f2f2f2;
+}
+
+*[role="form"] h2 { 
+    font-family: 'Open Sans' , sans-serif;
+    font-size: 40px;
+    font-weight: 600;
+    color: #000000;
+    margin-top: 5%;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+}
+#available{
+    color:green;
+}
+#unavailable{
+    color:red;
+}
+    </style>
+    <script>
+        
+	
+
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
+            // Validate Input Email
+            let doc_email = document.querySelector('#email')
+            
+            doc_email.addEventListener('input', function(){
+                let email_input = document.querySelector('#email').value
+                let formdata = new FormData()
+                formdata.append('email_input', email_input)
+                formdata.append('doc_name', doc_email)
+                fetch('validate_email',{
+                body:formdata,
+                method:'POST'
+            }).then(response => response.json()).then(data => {
+                // console.log(data)
+                let available = document.querySelector('#available')
+                let unavailable = document.querySelector('#unavailable')
+                if(data.r == 20){
+                    available.style.display = 'block'
+                    available.innerText = 'Username available!'
+                    unavailable.style.display = 'none'
+                }
+                if(data.r == 200){
+                    available.style.display = 'none'
+                    unavailable.style.display = 'block'
+                    unavailable.innerText = 'Username unavailable!'
+                }
+            }).catch(error => {
+                console.error('Error:', error)
+            })
+            })
+
+            // Register 
+            document.addEventListener('submit', function(){
+                event.preventDefault()
+                let email = document.querySelector('#email').value 
+                let doc_name = document.querySelector("#doc_name").value
+                let doc_designation = document.querySelector('#doc_designation').value
+                let password = document.querySelector('#password').value
+                let cpassword = document.querySelector('#cpassword').value 
+
+                let formdata2 = new FormData()
+                formdata2.append('email', email)
+                formdata2.append('doc_name', doc_name)
+                formdata2.append('doc_designation', doc_designation)
+                formdata2.append('password', password)
+                formdata2.append('cpassword', cpassword)
+
+                fetch('register_doctor',{
+                    body:formdata2,
+                    method:'POST'
+                }).then(response => response.json()).then(data =>{
+                    console.log(data)
+                    let status = document.querySelector('#status')
+                    status.innerText = data.message
+                }).catch(error => {
+                    console.log('error', error)
+                })
+            })
+            
+        })
+    </script>
+    <title>Registration</title>
+</head>
+<body>
+    <div class="container">
+        
+        <form class="form-horizontal" role="form"> 
+            <h2  id = "status"style = "color:green"></h2>
+            <h2>Doctor Registration</h2>
+            <div class="form-group">
+                <label for="firstName" class="col-sm-3 control-label">Doctor Name</label>
+                <div class="col-sm-9">
+                    <input type="text" id="doc_name" placeholder="Doctor Name" class="form-control" autofocus required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="firstName" class="col-sm-3 control-label">Doctor Designation</label>
+                <div class="col-sm-9">
+                    <input type="text" id="doc_designation" placeholder="Doctor Designation" class="form-control" autofocus required>
+                </div>
+            </div>
+           
+            <div class="form-group">
+                <label for="email" class="col-sm-3 control-label">Email</label>
+                <div class="col-sm-9">
+                    <input type="email" id="email" placeholder="Email" class="form-control" name= "email" required>
+                    <small id = "available"></small><small id = 'unavailable'></small>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password" class="col-sm-3 control-label">Password*</label>
+                <div class="col-sm-9">
+                    <input type="password" id="password" placeholder="Password" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password" class="col-sm-3 control-label">Confirm Password*</label>
+                <div class="col-sm-9">
+                    <input type="password" id="cpassword" placeholder="Password" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-9 col-sm-offset-3">
+                    <span class="help-block">*Required fields</span>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Register</button>
+        </form> <!-- /form -->
+        <a href="{% url 'login_doc' %}"><div class="login-container" style = "text-align:center"><button type="submit" class="btn btn-primary ">Login</button></div></a>
+    </div> <!-- ./container -->
+    
+</body>
+</html>
